@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AKUANUÁ — Mesa Virtual</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <section id="lobby-screen" class="lobby-screen">
+    <div class="lobby-container">
+      <header class="lobby-topbar">
+        <div class="brand-sculpted secret-trigger" id="secret-logo-lobby">AKUANUÁ</div>
+        <div class="room-bar">
+          <span class="lobby-badge" id="sync-badge">Sincronização: Abas locais</span>
+          <label style="font-size:0.8rem;color:var(--text-muted)">
+            Sala: <input type="text" id="room-code-input" value="MESA1" />
+          </label>
+          <button class="btn btn-sm btn-primary" id="btn-join-room">Conectar</button>
+          <button class="btn btn-sm" id="btn-new-room">Nova Sala</button>
+          <button class="btn btn-sm" id="btn-copy-room-lobby">Copiar Link</button>
+        </div>
+      </header>
+
+      <div class="panel-box data-bar" id="data-bar">
+        <div id="data-status" class="data-status warning">
+          Nenhuma base carregada. Selecione seu <strong>Livro Fonte.xlsx</strong> uma única vez.
+        </div>
+        <div class="data-actions">
+          <label class="btn btn-primary">
+            Carregar / Atualizar Planilha (.xlsx)
+            <input type="file" id="xlsx-input" accept=".xlsx,.xls" hidden />
+          </label>
+          <button id="btn-export-js" class="btn" disabled>Baixar arcana-data.js</button>
+        </div>
+      </div>
+
+      <div class="lobby-seats-strip" id="lobby-seats-grid"></div>
+
+      <div class="lobby-main-grid">
+        <div class="panel-box" id="persona-builder-panel">
+          <div class="section-head">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <h2 id="builder-title" style="margin:0">Sua Persona</h2>
+              <input type="text" id="my-nick-input" placeholder="Seu nome na mesa" class="nick-inline" />
+              <span class="lobby-badge" id="lobby-count-badge">0 de 4 assentos</span>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button class="btn btn-admin hidden" id="btn-enter-observer">Entrar como Observador (5º lugar)</button>
+              <button class="btn hidden" id="btn-leave-seat">Sair do assento</button>
+              <button class="btn btn-gold hidden" id="btn-toggle-ready">✓ Estou pronto</button>
+            </div>
+          </div>
+
+          <div id="not-seated-hint" class="waiting-box" style="margin-bottom:12px">
+            Digite seu nome acima e clique em qualquer <strong>Assento livre</strong> (ou clique diretamente em uma das classes abaixo).
+          </div>
+
+          <div class="builder-step-title">① Classe</div>
+          <div id="classes-showcase" class="classes-picker-grid"></div>
+
+          <div id="deck-builder-area" class="hidden">
+            <div class="builder-step-head">
+              <div>
+                <span class="builder-step-title">② Habilidades</span>
+                <span class="pill" id="skills-count-pill">0/15</span>
+                <span class="side-hint" id="skills-hint" style="margin-left:6px"></span>
+              </div>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-sm hidden" id="btn-autofill-skills">Completar 15</button>
+                <button class="btn btn-sm hidden" id="btn-clear-skills">Limpar</button>
+              </div>
+            </div>
+            <div id="lobby-skills-grid" class="deck-picker-grid"></div>
+
+            <div class="builder-step-head" style="margin-top:16px">
+              <div>
+                <span class="builder-step-title">③ Posturas</span>
+                <span class="pill" id="postures-count-pill">0/3</span>
+                <span class="side-hint" id="postures-hint" style="margin-left:6px"></span>
+              </div>
+              <button class="btn btn-sm" id="btn-autofill-postures">Preencher padrão</button>
+            </div>
+            <div id="lobby-postures-grid" class="deck-picker-grid"></div>
+          </div>
+        </div>
+
+        <aside class="panel-box match-sidebar">
+          <h2>Partida</h2>
+          <div id="player-wait-box" class="waiting-box">
+            Monte sua Persona escolhendo sua classe, suas 15 Habilidades e suas Posturas iniciais.<br/><br/>
+            Depois clique em <strong>✓ Estou pronto</strong> e aguarde o início da mesa.
+          </div>
+
+          <div id="admin-match-setup" class="hidden">
+            <div class="side-block">
+              <div class="side-label">NÍVEIS DE DESAFIO NO DECK</div>
+              <p class="side-hint">Recomenda-se iniciar apenas com os níveis básicos (Manual 6.3).</p>
+              <div class="level-pills" id="challenge-level-pills">
+                <button type="button" class="lvl-pill active" data-lvl="1">Nível 1</button>
+                <button type="button" class="lvl-pill active" data-lvl="2">Nível 2</button>
+                <button type="button" class="lvl-pill" data-lvl="3">Nível 3</button>
+                <button type="button" class="lvl-pill" data-lvl="4">Nível 4</button>
+                <button type="button" class="lvl-pill" data-lvl="5">Nível 5</button>
+              </div>
+            </div>
+            <div class="side-block">
+              <div class="side-label">MORTE (Cap. 11)</div>
+              <select id="death-mode" class="full-select">
+                <option value="menos_extremo">Modo Menos Extremo (Manual 11.2)</option>
+                <option value="narrativo_extremo">Modo Narrativo Extremo (Manual 11.1)</option>
+              </select>
+            </div>
+            <div class="side-block">
+              <div class="side-label">MODO</div>
+              <select id="game-mode" class="full-select">
+                <option value="tradicional">Tradicional</option>
+                <option value="campanha">Campanha</option>
+                <option value="morte_subita">Morte Súbita</option>
+              </select>
+            </div>
+            <label class="checkbox-inline" style="margin-top:8px;">
+              <input type="checkbox" id="include-draft-objectives" />
+              Incluir Objetivos ainda em rascunho
+            </label>
+            <button id="btn-start-match" class="btn btn-gold btn-lg full-btn" disabled>Iniciar partida</button>
+            <p class="side-hint" id="start-ready-status" style="margin-top:6px"></p>
+            <div id="admin-remove-seats" style="display:flex;flex-direction:column;gap:5px;margin-top:8px"></div>
+            <button id="btn-reset-room" class="btn btn-danger btn-sm full-btn" style="margin-top:8px;">Limpar Sala</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div id="table-screen" class="app-shell hidden">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="brand-sculpted small secret-trigger" id="secret-logo-table">AKUANUÁ</span>
+        <span class="pill" id="pill-room">MESA1</span>
+        <span class="pill" id="pill-round">Rodada 1</span>
+        <span class="pill pill-period" id="pill-period">Alvorada</span>
+        <span class="pill pill-phase" id="pill-phase">Turnos das Personas</span>
+        <span class="topbar-turn" id="topbar-turn">...</span>
+      </div>
+      <div class="topbar-center">
+        <label class="perspective-label hidden" id="admin-perspective-wrap">
+          Ver mesa como:
+          <select id="perspective-select"></select>
+        </label>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-sm" id="btn-swap-bottom">↔ Inverter</button>
+        <button class="btn btn-sm" id="btn-toggle-floating">Painéis Flutuantes</button>
+        <button class="btn btn-sm hidden" id="btn-reset-floating">Resetar Layout</button>
+        <button class="btn btn-sm" id="btn-rules">Regras</button>
+        <button class="btn btn-sm" id="btn-copy-link">Compartilhar</button>
+        <button class="btn btn-sm" id="btn-feedback">Feedback</button>
+        <button class="btn btn-sm btn-admin hidden" id="btn-toggle-admin">Akuanuá Admin</button>
+        <button class="btn btn-sm btn-danger" id="btn-exit-match">Sair</button>
+      </div>
+    </header>
+
+    <main class="table-grid" id="table-grid">
+      <section class="seat-region seat-north floatable-panel" data-panel-id="north" id="region-north"></section>
+      <section class="seat-region seat-west floatable-panel" data-panel-id="west" id="region-west"></section>
+
+      <section class="center-region floatable-panel" data-panel-id="center" id="region-center">
+        <div class="panel-drag-bar"><span>CENTRO · MERCADO &amp; MAPA</span><span>⠿</span></div>
+        <div class="center-top-strip">
+          <div class="market-zone">
+            <div class="section-mini-title">MERCADO DE OBJETIVOS</div>
+            <div class="market-slots" id="market-slots"></div>
+          </div>
+          <div class="decks-zone">
+            <div class="section-mini-title">BARALHOS COMPARTILHADOS</div>
+            <div class="shared-piles">
+              <div class="deck-thumb"><img src="Assets/CO.webp" alt="Objetivos" /><span class="deck-count" id="cnt-obj">0</span><span class="deck-cap">Objetivos</span></div>
+              <button class="deck-thumb clickable" id="btn-challenge-draw-quick"><img src="Assets/CD.webp" alt="Desafios" /><span class="deck-count" id="cnt-des">0</span><span class="deck-cap">Desafios</span></button>
+              <button class="deck-thumb clickable" id="btn-challenge-discard"><span class="deck-empty-box" id="cnt-des-disc">0</span><span class="deck-cap">Desc. Des.</span></button>
+              <div class="deck-thumb square"><img src="Assets/CC.webp" alt="Cenários" /><span class="deck-count" id="cnt-cen">0</span><span class="deck-cap">Cenários</span></div>
+            </div>
+            <div class="levels-caption" id="levels-caption">Níveis no deck de Desafios: 1, 2</div>
+          </div>
+        </div>
+        <div class="map-wrapper">
+          <div class="map-toolbar">
+            <span class="section-mini-title">MAPA DE CENÁRIOS (1:1)</span>
+            <span class="map-hint">Clique no Cenário para ampliar · Explorar para posicionar ou mover</span>
+          </div>
+          <div class="map-viewport" id="map-viewport"><div class="map-grid" id="map-grid"></div></div>
+        </div>
+        <div class="center-alerts hidden" id="center-alerts"></div>
+      </section>
+
+      <section class="seat-region seat-east floatable-panel" data-panel-id="east" id="region-east"></section>
+      <section class="seat-region seat-south floatable-panel" data-panel-id="south" id="region-south"></section>
+
+      <section class="comms-panel floatable-panel" data-panel-id="comms" id="region-comms">
+        <div class="panel-drag-bar"><span>REGISTRO &amp; CHAT</span><span>⠿</span></div>
+        <div class="comms-head">
+          <div class="comms-tabs">
+            <button class="chip active" data-comms-tab="all">Tudo</button>
+            <button class="chip" data-comms-tab="log">Registro</button>
+            <button class="chip" data-comms-tab="chat">Chat</button>
+          </div>
+          <span class="pane-sub">!chave para consultar</span>
+        </div>
+        <div class="comms-feed" id="comms-feed"></div>
+        <form class="chat-form" id="chat-form">
+          <input type="text" id="chat-input" placeholder="Escreva para a mesa ou !chave..." autocomplete="off" />
+          <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <aside id="admin-drawer" class="admin-drawer hidden">
+    <div class="drawer-header"><h3>Akuanuá Admin</h3><button class="btn-icon" id="btn-close-admin">✕</button></div>
+    <div class="drawer-body" id="admin-body"></div>
+  </aside>
+
+  <div id="modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal-box" id="modal-box">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="data/arcana-data.js" onerror="console.info('data/arcana-data.js opcional.')"></script>
+  <script src="js/manual.js" onerror="console.info('js/manual.js opcional.')"></script>
+  <script src="js/app-core.js"></script>
+  <script src="js/app-ui.js"></script>
+</body>
+</html>
