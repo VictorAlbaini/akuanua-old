@@ -89,7 +89,7 @@ html, body {
 
 .deck-picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(134px, 1fr)); gap: 10px; }
 .pick-card-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.pick-card-wrap .tarot-card, .pick-card-wrap .posture-lobby-card { width: 132px; min-width: 132px; height: 214px; opacity: 0.55; transition: 0.15s; }
+.pick-card-wrap .tarot-card, .pick-card-wrap .posture-lobby-card { width: 120px; min-width: 120px; height: 213px; opacity: 0.55; transition: 0.15s; }
 .pick-card-wrap.selected .tarot-card, .pick-card-wrap.selected .posture-lobby-card { opacity: 1; outline: 2px solid var(--gold); box-shadow: 0 0 12px rgba(200, 164, 100, 0.25); }
 .posture-lobby-card { background-color: #dfd6c5; background-image: url("../Assets/Postura.webp"); background-size: 100% 100%; color: var(--parchment-ink); border-radius: 0; padding: 17px 28px 16px 13px; font-family: Georgia, "Times New Roman", serif; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; overflow: hidden; }
 .active-posture-btn { font-size: 0.72rem; background: transparent; border: none; color: var(--text-muted); cursor: pointer; }
@@ -169,13 +169,13 @@ html, body {
 .market-zone, .decks-zone { min-width: 0; flex-shrink: 0; }
 .section-mini-title { font-size: 0.66rem; letter-spacing: 0.08em; color: var(--gold); font-weight: 700; margin-bottom: 4px; }
 .market-slots { display: flex; gap: 8px; }
-.market-parchment { width: 132px; min-width: 132px; height: 214px; flex-shrink: 0; background-color: #dcd3c1; background-image: url("../Assets/Objetivo.jpg"); background-size: 100% 100%; color: var(--parchment-ink); border-radius: 0; padding: 21px 30px 29px 15px; font-family: Georgia, "Times New Roman", serif; font-size: 0.62rem; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+.market-parchment { width: 120px; min-width: 120px; height: 213px; flex-shrink: 0; background-color: #dcd3c1; background-image: url("../Assets/Objetivo.webp"); background-size: 100% 100%; color: var(--parchment-ink); border-radius: 0; padding: 21px 30px 29px 15px; font-family: Georgia, "Times New Roman", serif; font-size: 0.62rem; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
 .market-parchment:hover { outline: 2px solid var(--gold); }
 .market-parchment.empty { background-image: none; background: #141720; color: var(--text-muted); border: 1px dashed var(--border); justify-content: center; align-items: center; text-align: center; padding: 10px; }
 .market-parchment .tarot-top { font-size: 0.48rem; }
 
 .shared-piles { display: flex; gap: 8px; align-items: flex-end; }
-.deck-thumb { position: relative; width: 132px; height: 214px; flex-shrink: 0; border-radius: 0; border: 1px solid #3c4254; background: #161922; display: flex; align-items: center; justify-content: center; color: var(--text); }
+.deck-thumb { position: relative; width: 120px; height: 213px; flex-shrink: 0; border-radius: 0; border: 1px solid #3c4254; background: #161922; display: flex; align-items: center; justify-content: center; color: var(--text); }
 .deck-thumb.square { width: 150px; height: 150px; }
 .deck-thumb.clickable { cursor: pointer; }
 .deck-thumb.clickable:hover { border-color: var(--gold); }
@@ -212,16 +212,16 @@ html, body {
 .south-hand-section { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--border); padding-top: 6px; }
 
 .posture-pair { display: flex; align-items: flex-start; }
-.posture-parchment { width: 132px; min-width: 132px; height: 214px; background-color: #dfd6c5; background-image: url("../Assets/Postura.webp"); background-size: 100% 100%; color: var(--parchment-ink); border-radius: 0; padding: 17px 28px 16px 13px; font-family: Georgia, "Times New Roman", serif; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; overflow: hidden; z-index: 2; }
+.posture-parchment { width: 120px; min-width: 120px; height: 213px; background-color: #dfd6c5; background-image: url("../Assets/Postura.webp"); background-size: 100% 100%; color: var(--parchment-ink); border-radius: 0; padding: 17px 28px 16px 13px; font-family: Georgia, "Times New Roman", serif; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; overflow: hidden; z-index: 2; }
 .posture-parchment:hover { outline: 2px solid var(--gold); }
-.posture-deck-back { width: 132px; min-width: 132px; height: 214px; margin-left: -74px; position: relative; border-radius: 0; cursor: pointer; z-index: 1; box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.75); }
+.posture-deck-back { width: 120px; min-width: 120px; height: 213px; margin-left: -74px; position: relative; border-radius: 0; cursor: pointer; z-index: 1; box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.75); }
 .posture-deck-back img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; border: 1px solid #44495a; }
 .posture-stats-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; text-align: center; border: 1px solid rgba(30, 25, 19, 0.35); background: rgba(255, 255, 255, 0.35); font-size: 0.6rem; padding: 2px 0; }
 
 .cards-h-strip { min-width: 0; display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 2px; align-items: flex-start; min-height: 220px; }
 .mesa-strip { border: 1px dashed rgba(200, 164, 100, 0.35); border-radius: 2px; padding: 4px; background: rgba(10, 12, 16, 0.45); }
 
-.tarot-card { width: 132px; min-width: 132px; height: 214px; flex-shrink: 0; background-color: #e3dbcc; background-image: url("../Assets/Habilidade.webp"); background-size: 100% 100%; color: var(--parchment-ink); border-radius: 0; padding: 19px 15px 14px 24px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; font-family: Georgia, "Times New Roman", serif; overflow: hidden; transition: transform 0.14s ease; }
+.tarot-card { width: 120px; min-width: 120px; height: 213px; flex-shrink: 0; background-color: #e3dbcc; background-image: url("../Assets/Habilidade.webp"); background-size: 100% 100%; color: var(--parchment-ink); border-radius: 0; padding: 19px 15px 14px 24px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; font-family: Georgia, "Times New Roman", serif; overflow: hidden; transition: transform 0.14s ease; }
 .tarot-card:hover { transform: translateY(-2px); outline: 2px solid var(--gold); }
 .tarot-top { display: flex; justify-content: space-between; gap: 4px; font-size: 0.56rem; color: var(--parchment-muted); font-weight: 700; }
 .tarot-name { font-size: 0.68rem; font-weight: 700; line-height: 1.12; margin: 2px 0; }
@@ -232,7 +232,7 @@ html, body {
 .tarot-body { font-size: 0.59rem; line-height: 1.22; color: #2b231b; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
 .tarot-footer { font-size: 0.52rem; color: var(--parchment-muted); border-top: 1px solid rgba(30, 25, 19, 0.22); padding-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.engaged-tarot { width: 132px; min-width: 132px; height: 214px; flex-shrink: 0; background-color: #e3dbcc; background-image: url("../Assets/Desafio.webp"); background-size: 100% 100%; color: var(--parchment-ink); border-radius: 0; padding: 22px 13px 16px 33px; display: flex; flex-direction: column; justify-content: space-between; font-family: Georgia, "Times New Roman", serif; overflow: hidden; cursor: pointer; }
+.engaged-tarot { width: 120px; min-width: 120px; height: 213px; flex-shrink: 0; background-color: #e3dbcc; background-image: url("../Assets/Desafio.webp"); background-size: 100% 100%; color: var(--parchment-ink); border-radius: 0; padding: 22px 13px 16px 33px; display: flex; flex-direction: column; justify-content: space-between; font-family: Georgia, "Times New Roman", serif; overflow: hidden; cursor: pointer; }
 .engaged-tarot:hover { outline: 2px solid var(--gold); }
 .engaged-stats { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; font-size: 0.56rem; background: rgba(255, 255, 255, 0.35); border: 1px solid rgba(30, 25, 19, 0.3); padding: 2px 0; margin: 3px 0; }
 .engaged-actions { display: flex; gap: 4px; }
